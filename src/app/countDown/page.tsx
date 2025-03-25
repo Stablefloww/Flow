@@ -1,10 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import Image from "next/image";
-import twit from '../../assests/x-logo.png'
-import git from '../../assests/warpcast-logo.svg'
-import newlogo from '../../assests/newlogo.svg'
-import vectorBg from '../../assests/Vector.svg'
+import twit from '../../assets/x-logo.png'
+import git from '../../assets/warpcast-logo.svg'
+import logo from '../../assets/stableflow-logo.svg'
+import vectorBg from '../../assets/Vector.svg'
 
 export default function Home() {
   const targetDate = new Date('2025-03-26T00:00:00Z').getTime(); // March 26, 2025 @ 00:00 UTC
@@ -99,8 +99,8 @@ export default function Home() {
         <div className="grid gap-[5rem] z-10">
           <div className="flex justify-between px-[2rem] lg:px-0 items-center z-20">
             <Image 
-              src={newlogo}
-              alt="logo"
+              src={logo}
+              alt="stableflow logo"
               width={100}
               height={100}
               className="lg:w-[170px] lg:h-[38px] w-[120px] h-[25px]"

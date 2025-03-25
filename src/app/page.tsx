@@ -1,9 +1,9 @@
 'use client'
 import React from "react";
 import Image from "next/image";
-import logo from '../assests/image1.png'
-import twit from '../assests/x-logo.png'
-import git from '../assests/warpcast-logo.svg'
+import logo from '../assets/stableflow-logo.svg'
+import twit from '../assets/x-logo.png'
+import git from '../assets/warpcast-logo.svg'
 import { PrimaryButton } from "@/components/primary-button";
 import { SecondaryButton } from "@/components/secondary-button";
 import { useRouter } from "next/navigation";
@@ -52,7 +52,7 @@ export default function Home() {
         <div className="flex justify-between px-[2rem] lg:px-0 items-center">
           <Image 
             src={logo}
-            alt="logo"
+            alt="stableflow logo"
             width={100}
             height={100}
             className="lg:w-[175px] lg:h-[38px] w-[120px] h-[25px]"

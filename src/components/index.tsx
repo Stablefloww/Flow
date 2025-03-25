@@ -6,4 +6,4 @@ export * from './button';
 
 // Other components
 export { default as TransactionHistoryContainer } from './transaction-history-container';
-export { default as TransactionNotification } from './transaction-notification';
+export { TransactionNotification } from './transaction-notification';

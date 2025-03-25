@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import logo from '../../assests/loggo.svg';
+import logo from '../../assets/stableflow-logo.svg';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TertiaryButton } from '../../components/tertiary-button';
@@ -210,11 +210,10 @@ export default function AuthPage() {
           <div className="flex flex-row justify-start items-center w-full">
             <Image 
               src={logo}
-              alt="logo"
-              width={135}
-              height={26}
-              className="w-[135px] h-[26px]"
-              priority
+              alt="stableflow logo"
+              width={100}
+              height={100}
+              className="lg:w-[175px] lg:h-[38px] w-[120px] h-[25px]"
             />
           </div>
           

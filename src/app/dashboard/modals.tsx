@@ -2,13 +2,13 @@
 import React, { useState, useCallback } from 'react'
 import Image from 'next/image'
 import * as Dialog from "@radix-ui/react-dialog";
-import close from "../../assests/add.svg"
+import close from "../../assets/add.svg"
 import { PrimaryButton } from '@/components'
-import yellow from '../../assests/image6.svg'
-import green from '../../assests/tick-circle.svg'
-import image5 from "../../assests/import.svg"
+import yellow from '../../assets/image6.svg'
+import green from '../../assets/tick-circle.svg'
+import image5 from "../../assets/import.svg"
 import { BusinessDropdownSelector } from './BusinessDropdwon';
-import export2 from "../../assests/export2.svg"
+import export2 from "../../assets/export2.svg"
 import { motion, AnimatePresence } from "framer-motion"
 import { StepBack } from 'lucide-react';
 import { ThumbsUp } from 'lucide-react';

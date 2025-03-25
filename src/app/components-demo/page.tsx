@@ -74,7 +74,6 @@ export default function ComponentsDemo() {
               <div>
                 <h3 className="text-md font-medium mb-3">Transaction History (With Data)</h3>
                 <TransactionHistoryContainer 
-                  transactions={sampleTransactions}
                   title="Recent Transactions"
                   downloadButtonText="Export CSV"
                 />
@@ -83,10 +82,8 @@ export default function ComponentsDemo() {
               <div>
                 <h3 className="text-md font-medium mb-3">Transaction History (Empty State)</h3>
                 <TransactionHistoryContainer 
-                  transactions={emptyTransactions}
                   title="Pending Transactions"
                   emptyStateText="No pending transactions"
-                  emptyStateImage="/api/placeholder/200/120"
                   downloadButtonText="Download Report"
                 />
               </div>

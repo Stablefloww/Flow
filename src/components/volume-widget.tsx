@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { Eye, EyeOff, Zap } from "lucide-react"
 import { PrimaryButton } from "./primary-button"
 import { SecondaryButton } from "./secondary-button"
-import share from '../assests/export.svg'
+import share from '../assets/export.svg'
 import Image from "next/image"
 import NumberFlow from '@number-flow/react'
 

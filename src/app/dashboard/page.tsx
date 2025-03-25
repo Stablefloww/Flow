@@ -2,16 +2,16 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react'
 import Image from 'next/image'
-import logo from '../../assests/image1.png'
-import address from '../../assests/image4.svg'
+import logo from '../../assets/stableflow-logo.svg'
+import address from '../../assets/image4.svg'
 import { VolumeWidget } from '@/components/volume-widget'
 import { TransactionHistoryContainer } from '@/components'
-import edit from '../../assests/magicpen.svg'
+import edit from '../../assets/magicpen.svg'
 import { TransactionNotification } from '@/components'
 import * as Dialog from "@radix-ui/react-dialog";
 import { TertiaryButton } from '@/components'
-import twit from '../../assests/x-logo.png'
-import git from '../../assests/warpcast-logo.svg'
+import twit from '../../assets/x-logo.png'
+import git from '../../assets/warpcast-logo.svg'
 import Modals from './modals'
 import Dropdown from './dropDown'
 import { useAppSelector } from '../store/store'
@@ -73,7 +73,7 @@ export default function Page() {
       <div className="flex justify-between w-screen lg:w-[100%] lg:mt-[4rem] mt-[1.5rem] px-[1rem] lg:border-b-0 border-b-[2px] pb-[0.5rem] lg:pb-0 border-[#F1F1F1] lg:px-0 items-center">
         <Image 
           src={logo}
-          alt="logo"
+          alt="stableflow logo"
           width={100}
           height={100}
           className="lg:w-[180px] lg:h-[40px] w-[100px] h-[22px]"

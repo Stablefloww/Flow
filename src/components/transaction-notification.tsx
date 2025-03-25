@@ -1,50 +1,60 @@
 "use client"
-import { useState } from "react"
+import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
+import usd from '../assets/usdcoin.svg'
+import usdt from '../assets/usdt-svgrepo-com.svg'
 import { TertiaryButton } from "./tertiary-button"
 import { SmallSecondaryButton } from "./secondary-button"
 import { AlertCircle } from "lucide-react"
 import transactionss from "./mockData"
 import * as Dialog from "@radix-ui/react-dialog";
 
-import TransanctionHistoryModal from "@/app/modals/TransanctionNotificationModal"
-export interface TransactionNotificationProps {
-  initialNotifications?: Array<{
-    id: number;
-    title: string;
-    time: string;
-    description: string;
-  }>;
+import TransanctionNotificationModal from "@/app/modals/TransanctionNotificationModal"
+
+interface Notification {
+  id: number
+  crypto_value: string
+  naira_received: string
+  date: string
+  timestamp: string
+  status: 'completed' | 'pending' | 'failed'
+  transaction_id: string
+  recipient_account: string
+  unique_id: string
 }
 
-export default function TransactionNotification({ 
-  initialNotifications 
-}: TransactionNotificationProps = {}) {
+export interface TransactionNotificationProps {
+  initialNotifications?: Notification[]
+}
+
+export const TransactionNotification: React.FC<TransactionNotificationProps> = ({ initialNotifications = [] }) => {
+  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null)
+
+  useEffect(() => {
+    setNotifications(initialNotifications)
+  }, [initialNotifications])
+
+  const modalcontrol = () => {
+    setModalOpen(true)
+  }
+
+  const modalclose = () => {
+    setModalOpen(false)
+    setSelectedNotification(null)
+  }
+
+  const handleNotificationClick = (notification: Notification) => {
+    setSelectedNotification(notification)
+    modalcontrol()
+  }
 
   const lastThree = transactionss?.slice(-3)
-  const [notifications, setNotifications] = useState(
-    initialNotifications || lastThree
-  )
-  interface Transactionss {
-    unique_id: string;
-    transaction_id: string;
-    crypto_value: string;
-    naira_received: string;
-    recipient_account: string;
-    date: string;
-    timestamp: string;
-    status: any; 
-  }
   const [isClearing, setIsClearing] = useState(false)
   const [clearingIndices, setClearingIndices] = useState<number[]>([])
   const [containerClearing, setContainerClearing] = useState(false)
-  const [isOpen, setIsOpen] = useState(false);
 
-  function modalcontrol() {
-    setIsOpen(!isOpen)
-  }
-  function modalclose() {
-    setIsOpen(false)
-  }
   const clearAllNotifications = () => {
     if (isClearing) return // Prevent multiple clicks during animation
 
@@ -82,194 +92,240 @@ export default function TransactionNotification({
   }
 
   return (
-    <div className="w-full ">
-      <div
-        className={`flex flex-col w-full items-start p-0 gap-4 ${containerClearing ? "animate-container-clear" : ""}`}
-      >
-        {/* Header row */}
-        <div className="flex flex-row items-center justify-between w-full">
-          <div className="flex flex-row items-center gap-2">
-            <h2
-              className="font-medium text-base leading-tight pl-[1rem]"
-              style={{
-                fontFamily: "'SF Pro Text', sans-serif",
-                letterSpacing: "-0.02em",
-                color: "#121212",
-              }}
-            >
-              Recent transactions
-            </h2>
-            <div
-              className="flex justify-center items-center"
-              style={{
-                width: "20px",
-                height: "20px",
-                border: "1px solid #E2DEDE",
-                borderRadius: "10000px",
-                padding: "6px",
-              }}
-            >
-              <span
-                className="flex items-center justify-center"
-                style={{
-                  fontFamily: "'SF Pro Text', sans-serif",
-                  fontWeight: 500,
-                  fontSize: "12px",
-                  letterSpacing: "-0.02em",
-                  color: "#121212",
-                  lineHeight: "1",
-                }}
-              >
-                {lastThree.length}
-              </span>
+    <div className="w-full">
+      <div className="flex flex-col gap-[1rem]">
+        {notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className="flex flex-row items-center justify-between p-4 bg-white rounded-2xl shadow-sm cursor-pointer hover:shadow-md transition-shadow duration-200"
+            onClick={() => handleNotificationClick(notification)}
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-[#F7F7F7] flex items-center justify-center">
+                <Image
+                  src={notification.crypto_value.includes('USDT') ? usdt : usd}
+                  alt="crypto icon"
+                  width={24}
+                  height={24}
+                />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="text-[16px] font-medium text-[#121212]">
+                    {notification.crypto_value}
+                  </span>
+                  <span className="text-[14px] text-[#7C7C7C]">
+                    ≈ {notification.naira_received}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[14px] text-[#7C7C7C]">
+                    {notification.date}
+                  </span>
+                  <span className="text-[14px] text-[#7C7C7C]">
+                    {notification.timestamp}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className={`flex items-center justify-center font-[500] text-[13px] ${notification.status === "completed" ? "text-green-500 bg-green-100 py-[0.2rem] px-[0.3rem] rounded-md" : notification.status === "pending" ? "text-yellow-500 bg-yellow-100 py-[0.2rem] px-[0.3rem] rounded-md" : "text-red-500 bg-red-100 py-[0.2rem] px-[0.3rem] rounded-md"}`}>
+              {notification.status}
             </div>
           </div>
-          <TertiaryButton
-            label="Clear all"
-            onClick={clearAllNotifications}
-            disabled={isClearing || notifications.length === 0}
-            className="cursor-pointer mr-[1rem] lg:mr-0"
-          >
-            Clear all
-          </TertiaryButton>
+        ))}
+      </div>
+
+      {modalOpen && selectedNotification && (
+        <div className="fixed inset-0 z-50">
+          <TransanctionNotificationModal 
+            modalclose={modalclose} 
+            notification={selectedNotification} 
+          />
         </div>
+      )}
 
-        {/* Stacked notifications */}
-        <Dialog.Root open={isOpen} onOpenChange={modalclose}>
-                     
-                    
-        <div className="relative w-full  " style={{ height: "120px" }} onClick={modalcontrol}>
-          {lastThree.map((notification, index) => {
-            // Use different sizes based on screen size but allow for full width
-            const sizes = [
-              { width: "95%", height: "61px", padding: "12px 13.9763px", gap: "6.99px" },
-              { width: "90%", height: "64px", padding: "11.5539px", gap: "5.78px" },
-              { width: "80%", height: "64px", padding: "9.5085px", gap: "4.75px" },
-            ]
-
-            const isClearing = clearingIndices.includes(index)
-
-            return (
-              <div
-                key={notification.unique_id}
-                className={`lg:absolute lg:left-1/2 ml-[1rem] lg:ml-0 lg:transform lg:-translate-x-1/2 ${isClearing ? "animate-clear-notification" : ""}`}
+      <div className="w-full ">
+        <div
+          className={`flex flex-col w-full items-start p-0 gap-4 ${containerClearing ? "animate-container-clear" : ""}`}
+        >
+          {/* Header row */}
+          <div className="flex flex-row items-center justify-between w-full">
+            <div className="flex flex-row items-center gap-2">
+              <h2
+                className="font-medium text-base leading-tight pl-[1rem]"
                 style={{
-                  width: sizes[index].width,
-                  height: sizes[index].height,
-                  top: index * -45, // -45px vertical spacing
-                  zIndex: 3 - index,
-                  position: "relative",
-                  borderRadius: "15px",
-                  overflow: "hidden",
-                  opacity: isClearing ? 0 : 1, // Start with opacity 1, animation will handle the transition
-                  transition: "opacity 0.3s ease-in-out",
+                  fontFamily: "'SF Pro Text', sans-serif",
+                  letterSpacing: "-0.02em",
+                  color: "#121212",
                 }}
               >
-                {/* Gradient border - using pseudo-element approach */}
-                <div
-                  className="absolute inset-0"
+                Recent transactions
+              </h2>
+              <div
+                className="flex justify-center items-center"
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  border: "1px solid #E2DEDE",
+                  borderRadius: "10000px",
+                  padding: "6px",
+                }}
+              >
+                <span
+                  className="flex items-center justify-center"
                   style={{
-                    background: "linear-gradient(180deg, #4AA2FF 0%, #7175F9 100%)",
-                    borderRadius: "15px",
-                    padding: "1px", // This creates the border effect
+                    fontFamily: "'SF Pro Text', sans-serif",
+                    fontWeight: 500,
+                    fontSize: "12px",
+                    letterSpacing: "-0.02em",
+                    color: "#121212",
+                    lineHeight: "1",
                   }}
                 >
-                  {/* Inner content container with 100% corner radius smoothing */}
+                  {lastThree.length}
+                </span>
+              </div>
+            </div>
+            <TertiaryButton
+              label="Clear all"
+              onClick={clearAllNotifications}
+              disabled={isClearing || notifications.length === 0}
+              className="cursor-pointer mr-[1rem] lg:mr-0"
+            >
+              Clear all
+            </TertiaryButton>
+          </div>
+
+          {/* Stacked notifications */}
+          <Dialog.Root open={modalOpen} onOpenChange={modalclose}>
+            <div className="relative w-full  " style={{ height: "120px" }} onClick={modalcontrol}>
+              {lastThree.map((notification, index) => {
+                // Use different sizes based on screen size but allow for full width
+                const sizes = [
+                  { width: "95%", height: "61px", padding: "12px 13.9763px", gap: "6.99px" },
+                  { width: "90%", height: "64px", padding: "11.5539px", gap: "5.78px" },
+                  { width: "80%", height: "64px", padding: "9.5085px", gap: "4.75px" },
+                ]
+
+                const isClearing = clearingIndices.includes(index)
+
+                return (
                   <div
-                    className="absolute inset-0 flex flex-row justify-center items-center"
+                    key={notification.unique_id}
+                    className={`lg:absolute lg:left-1/2 ml-[1rem] lg:ml-0 lg:transform lg:-translate-x-1/2 ${isClearing ? "animate-clear-notification" : ""}`}
                     style={{
-                      background:
-                        "linear-gradient(180deg, rgba(233, 233, 233, 0.24) 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF",
-                      margin: "1px", // This creates space for the border
-                      padding: sizes[index].padding,
-                      gap: sizes[index].gap,
-                      borderRadius: "14px", // Slightly smaller than parent to show border
-                      // Apply 100% corner radius smoothing
-                      borderTopLeftRadius: "14px 14px",
-                      borderTopRightRadius: "14px 14px",
-                      borderBottomLeftRadius: "14px 14px",
-                      borderBottomRightRadius: "14px 14px",
+                      width: sizes[index].width,
+                      height: sizes[index].height,
+                      top: index * -45, // -45px vertical spacing
+                      zIndex: 3 - index,
+                      position: "relative",
+                      borderRadius: "15px",
+                      overflow: "hidden",
+                      opacity: isClearing ? 0 : 1, // Start with opacity 1, animation will handle the transition
+                      transition: "opacity 0.3s ease-in-out",
                     }}
                   >
-                    {/* Notification content */}
-                    <div className="flex flex-row items-center justify-center lg:justify-between w-full">
-                      {/* Left side with icon and text */}
-                      <div className="flex flex-row items-center  lg:gap-2 gap-[1.5rem]" >
-                        {/* Circle icon */}
-                        <div
-                          className="flex items-center justify-center rounded-full"
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            background: "linear-gradient(180deg, #7073F9 0%, #4AA2FF 100%)",
-                          }}
-                        >
-                          <AlertCircle className="w-5 h-5 text-white" />
-                        </div>
+                    {/* Gradient border - using pseudo-element approach */}
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: "linear-gradient(180deg, #4AA2FF 0%, #7175F9 100%)",
+                        borderRadius: "15px",
+                        padding: "1px", // This creates the border effect
+                      }}
+                    >
+                      {/* Inner content container with 100% corner radius smoothing */}
+                      <div
+                        className="absolute inset-0 flex flex-row justify-center items-center"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, rgba(233, 233, 233, 0.24) 0%, rgba(255, 255, 255, 0) 100%), #FFFFFF",
+                          margin: "1px", // This creates space for the border
+                          padding: sizes[index].padding,
+                          gap: sizes[index].gap,
+                          borderRadius: "14px", // Slightly smaller than parent to show border
+                          // Apply 100% corner radius smoothing
+                          borderTopLeftRadius: "14px 14px",
+                          borderTopRightRadius: "14px 14px",
+                          borderBottomLeftRadius: "14px 14px",
+                          borderBottomRightRadius: "14px 14px",
+                        }}
+                      >
+                        {/* Notification content */}
+                        <div className="flex flex-row items-center justify-center lg:justify-between w-full">
+                          {/* Left side with icon and text */}
+                          <div className="flex flex-row items-center  lg:gap-2 gap-[1.5rem]" >
+                            {/* Circle icon */}
+                            <div
+                              className="flex items-center justify-center rounded-full"
+                              style={{
+                                width: "36px",
+                                height: "36px",
+                                background: "linear-gradient(180deg, #7073F9 0%, #4AA2FF 100%)",
+                              }}
+                            >
+                              <AlertCircle className="w-5 h-5 text-white" />
+                            </div>
 
-                        {/* Text content */}
-                        <div className="flex flex-col">
-                          {/* First row */}
-                          <div className="flex flex-row items-center gap-2">
-                            <span
-                              style={{
-                                fontFamily: "'SF Pro Text', sans-serif",
-                                fontWeight: 500,
-                                fontSize: "14px",
-                                color: "#121212",
-                              }}
-                            >
-                             Transaction alert!
-                            </span>
-                            <span
-                              style={{
-                                fontFamily: "'SF Pro Text', sans-serif",
-                                fontWeight: 400,
-                                fontSize: "12px",
-                                textDecorationLine: "underline",
-                                color: "#929292",
-                              }}
-                            >
-                            at{""} {notification.date}
-                            </span>
+                            {/* Text content */}
+                            <div className="flex flex-col">
+                              {/* First row */}
+                              <div className="flex flex-row items-center gap-2">
+                                <span
+                                  style={{
+                                    fontFamily: "'SF Pro Text', sans-serif",
+                                    fontWeight: 500,
+                                    fontSize: "14px",
+                                    color: "#121212",
+                                  }}
+                                >
+                                 Transaction alert!
+                                </span>
+                                <span
+                                  style={{
+                                    fontFamily: "'SF Pro Text', sans-serif",
+                                    fontWeight: 400,
+                                    fontSize: "12px",
+                                    textDecorationLine: "underline",
+                                    color: "#929292",
+                                  }}
+                                >
+                                at{""} {notification.date}
+                                </span>
+                              </div>
+
+                              {/* Second row */}
+                              <span
+                                style={{
+                                  fontFamily: "'SF Pro Text', sans-serif",
+                                  fontWeight: 500,
+                                  fontSize: "12px",
+                                  color: "#959595",
+                                }}
+                              >
+                             You just received <span className="bg-gradient-to-r from-[#1F90FF] to-[#504CF6] text-transparent bg-clip-text">{notification.crypto_value}</span> approx <span className="bg-gradient-to-r from-[#1F90FF] to-[#504CF6] text-transparent bg-clip-text">{notification.naira_received}</span>
+                              </span>
+                            </div>
                           </div>
 
-                          {/* Second row */}
-                          <span
-                            style={{
-                              fontFamily: "'SF Pro Text', sans-serif",
-                              fontWeight: 500,
-                              fontSize: "12px",
-                              color: "#959595",
-                            }}
-                          >
-                         You just received  <span className="bg-gradient-to-r from-[#1F90FF] to-[#504CF6] text-transparent bg-clip-text">{notification.crypto_value}</span>  approx <span className="bg-gradient-to-r from-[#1F90FF] to-[#504CF6] text-transparent bg-clip-text">{notification.naira_received}</span>
-                          </span>
+                          {/* Right side with button */}
+                          <div className="hidden lg:flex">
+                            <SmallSecondaryButton 
+                              text="View transaction"
+                            />
+                          </div> 
+                           
+                           <TransanctionNotificationModal modalclose={modalclose} notification={notification} />
+                        
                         </div>
                       </div>
-
-                      {/* Right side with button */}
-                   
-                     
-                      <div className="hidden lg:flex">
-                      <SmallSecondaryButton 
-                        text="View transaction"
-                        />
-                        </div> 
-                         
-                         <TransanctionHistoryModal modalopen={modalcontrol} modalclose={modalclose} notification={notification} />
-                      
-                    </div>
+                    </div> 
                   </div>
-                </div> 
-                       
-              </div>
-            )
-          })}
+                )
+              })}
+            </div>
+          </Dialog.Root>
         </div>
-             
-                        </Dialog.Root>
-                        
       </div>
 
       {/* Add animation styles */}

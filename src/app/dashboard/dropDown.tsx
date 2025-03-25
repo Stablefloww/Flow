@@ -1,12 +1,13 @@
 import React from 'react'
 import { useState,useRef,useEffect } from 'react'
-import trash from '../../assests/trash.svg'
-import wrong1 from "../../assests/group.svg"
-import wrong2 from "../../assests/group2.svg"
-import address from '../../assests/image4.svg'
+import trash from '../../assets/trash.svg'
+import wrong1 from "../../assets/group.svg"
+import wrong2 from "../../assets/group2.svg"
+import address from '../../assets/image4.svg'
 import Image from 'next/image'
 import { motion } from "framer-motion";
-import wallet from '../../assests/wallet-add.svg'
+import wallet from '../../assets/wallet-add.svg'
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 export default function Dropdown() {
     const [isOpen, setIsOpen] = useState(false);
